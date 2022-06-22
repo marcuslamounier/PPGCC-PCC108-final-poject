@@ -1,16 +1,16 @@
 import { ChangeEvent, Component, useState } from "react"
 import InputText, { MvInputProps } from "./InputText"
 
-type Props = {
+export type MvFormProps = {
   fields: Omit<MvInputProps, "handleInput">[]
 }
 
 type State = {
-  [key: string]: string
+  [key: string]: string | number
 }
 
-class MvForm extends Component<Props, State> {
-  constructor(props: Props) {
+class MvForm extends Component<MvFormProps, State> {
+  constructor(props: MvFormProps) {
     super(props)
 
     const fieldNames = props.fields.map(field => field.name)
@@ -37,6 +37,7 @@ class MvForm extends Component<Props, State> {
               label={field.label}
               initialValue={field.initialValue || ""}
               isRequired={field.isRequired}
+              mask={field.mask}
               handleInput={this.handleInput}
             />
           )

@@ -49,7 +49,7 @@ const FinancesRender = ({ transaction }: Props) => {
             <MvBadge badgeName='delete' />
           </HStack>
           <Box as="div" fontSize="2xl" color="black" borderRadius={8} fontWeight="bold">
-            R$ {transaction.value.toLocaleString('pt-Br')}
+            R$ {transaction.value.toLocaleString('pt-Br', {style: 'currency', currency: 'BRL'})}
           </Box>
         </HStack>
       </VStack>

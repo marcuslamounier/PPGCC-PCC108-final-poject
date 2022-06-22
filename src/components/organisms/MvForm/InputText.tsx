@@ -8,6 +8,7 @@ export type MvInputProps = {
   handleInput: (event: ChangeEvent<HTMLInputElement>) => void
   placeholder?: string
   isRequired?: boolean
+  mask?: (value: any) => string
 }
 
 const InputText = ({
@@ -16,12 +17,14 @@ const InputText = ({
   initialValue,
   label,
   placeholder,
-  isRequired = true
+  isRequired = true,
+  mask = undefined
 }: MvInputProps) => {
   const objName = `input-${name}`
   const [fieldValue, setFieldValue] = useState<string>(initialValue || '')
 
   const updateField = (event: ChangeEvent<HTMLInputElement>) => {
+    if (mask) event.target.value = mask(event.target.value)
     setFieldValue(event.target.value)
     handleInput(event)
   }

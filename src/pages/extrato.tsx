@@ -1,7 +1,5 @@
-import type { GetServerSidePropsContext, InferGetServerSidePropsType, NextPage } from 'next'
-import { Box, Button, Grid, Heading, HStack, Stack, StackDivider, useDisclosure } from '@chakra-ui/react'
-import { parseCookies } from 'nookies'
-import { UserService } from '../services/UserService'
+import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
+import { Box, Button, Heading, HStack, useDisclosure, useToast } from '@chakra-ui/react'
 import { useAuthContext } from '../services/AuthService/AuthContext'
 import LoggedTemplate from '../templates/loggedTemplate'
 import { checkAtStart } from '../services/AuthService/CheckLogin'
@@ -11,8 +9,11 @@ import { ReleaseEnum, TransactionInterface } from '../interfaces/TransactionInte
 import { createRef, useEffect, useState } from 'react'
 import { TransactionService } from '../services/TransactionService'
 import { GrAddCircle } from "react-icons/gr"
-import { MvInputProps } from '../components/organisms/MvForm/InputText'
-import MvForm from '../components/organisms/MvForm'
+import MvForm, { MvFormProps } from '../components/organisms/MvForm'
+import { dateMask, moneyMask } from '../util/masks'
+import MvModal from '../components/organisms/MvModal'
+import { dateToUtc } from '../util/dateConverter'
+import { getCurrencyVal, onlyNums } from '../util/stringFunctions'
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   return await checkAtStart(ctx)
@@ -24,12 +25,15 @@ const Extrato = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) => {
   const authContext = useAuthContext()
+  const toast = useToast()
   const { isOpen, onOpen, onClose } = useDisclosure()
+
+  const myId = authContext.user.id
 
   const [state, setState] = useState<{
     dataIsLoading: boolean,
     dataChanged: boolean,
-    transactionsData: TransactionInterface[]
+    transactionsData: TransactionInterface[],
   }>({
     dataIsLoading: true,
     dataChanged: false,
@@ -59,13 +63,83 @@ const Extrato = (
     fetchData()
   }, [state.dataChanged, authContext, props])
 
-  const formFields: Omit<MvInputProps, "handleInput">[] = [
-    { name: 'name', label: 'Nome' },
-    { name: 'job', label: 'Profissão' },
-    { name: 'email', label: 'Email' },
-    { name: 'pass', label: 'Senha Provisória' }
+  const formFields: MvFormProps['fields'] = [
+    { name: 'date', label: 'Data', mask: dateMask },
+    { name: 'description', label: 'Descrição', },
+    { name: 'category', label: 'Categoria' },
+    { name: 'value', label: 'Valor', mask: moneyMask },
   ]
   const formRef = createRef<MvForm>()
+  const [nextRelease, setNextRelease] = useState<ReleaseEnum>(1)
+
+  const onSubmit = async () => {
+    const formData = formRef.current?.state
+    if (!formData) return
+    else {
+      for (const field in formData) {
+        if ((formData as any)[field] === '') {
+          toast({
+            title: 'Formulário incompleto',
+            description: "Você precisa preencher todos os campos.",
+            status: 'error',
+            duration: 3000,
+            isClosable: true,
+          })
+          return
+        }
+      }
+      try {
+        setState(prevState => ({ ...prevState, dataIsLoading: true }))
+        const { status } = await TransactionService.addTransaction(
+          props.token,
+          {
+            release: nextRelease === 1 ? ReleaseEnum.revenue : ReleaseEnum.expense,
+            category: String(formData.category),
+            date: new Date(dateToUtc(String(formData.date))),
+            description: String(formData.description),
+            user_id: myId,
+            value: getCurrencyVal(String(formData.value))
+          }
+        )
+        if (status === 201) {
+          toast({
+            title: 'User added',
+            description: "Loading . . .",
+            status: 'success',
+            duration: 3000,
+            isClosable: true,
+          })
+          setState(prevState => ({ ...prevState, dataChanged: true }))
+        }
+        onClose()
+      } catch (error) {
+        console.error(error)
+      } finally {
+        setState(prevState => ({ ...prevState, dataIsLoading: false }))
+      }
+
+    }
+  }
+
+  const modalActions = (
+    <Button colorScheme='blue' mr={3} onClick={onSubmit}>
+      Salvar
+    </Button>
+  )
+
+  const ModalAddUser = () => {
+    const title = `Adicionar ${nextRelease === 1 ? 'receita' : 'despesa'}`
+    return (
+      <MvModal
+        title={title}
+        isOpen={isOpen}
+        onClose={onClose}
+        modalActions={modalActions}
+      >
+        <MvForm ref={formRef} fields={formFields} />
+      </MvModal>
+    )
+  }
 
   return (
     <LoggedTemplate userDetails={props.user}>
@@ -85,9 +159,13 @@ const Extrato = (
           w="40%"
           spacing={2}
           justifyContent="center"
+          alignItems="flex-start"
         >
           <Button
-            onClick={onOpen}
+            onClick={() => {
+              setNextRelease(1)
+              onOpen()
+            }}
             leftIcon={<GrAddCircle />}
             variant='solid'
             colorScheme="blue"
@@ -95,13 +173,17 @@ const Extrato = (
             Adicionar RECEITA
           </Button>
           <Button
-            onClick={onOpen}
+            onClick={() => {
+              setNextRelease(-1)
+              onOpen()
+            }}
             leftIcon={<GrAddCircle />}
             variant='solid'
             colorScheme="red"
           >
             Adicionar DESPESA
           </Button>
+          <ModalAddUser />
         </HStack>
       </MvList>
     </LoggedTemplate>
