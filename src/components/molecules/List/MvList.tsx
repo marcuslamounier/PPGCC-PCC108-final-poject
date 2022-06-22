@@ -1,20 +1,22 @@
-import { StackDivider, VStack } from "@chakra-ui/react"
+import { StackDivider, Stack, StackDirection } from "@chakra-ui/react"
 import { ReactNode } from "react"
 
 type Props = {
   children: ReactNode
+  direction?: StackDirection
 }
 
-const MvList = ({ children }: Props) => {
+const MvList = ({ children, direction = 'column' }: Props) => {
   return (
-    <VStack
+    <Stack
       divider={<StackDivider borderColor='gray.700' />}
+      direction={direction}
       spacing={2}
+      justifyContent="space-between"
       align='stretch'
-      py={4}
     >
       {children}
-    </VStack>
+    </Stack>
   )
 }
 

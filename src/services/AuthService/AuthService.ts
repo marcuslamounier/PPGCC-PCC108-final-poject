@@ -1,6 +1,7 @@
 import { UserInterface } from "../../interfaces/UserInterface"
 import { UserService } from '../UserService'
 import api from "../api"
+import { User } from "../../classes/User"
 
 const path = '/auth'
 
@@ -12,18 +13,17 @@ export const AuthService = {
     }
     return api.post(`${path}/login`, body)
   },
-  async getMe(token: string, myId: string) {
+  async getMe(token: string, myId: number) {
     try {
-      const { data } = await UserService.getUsers(token)
-      const userData = data.find((user: any) => String(user.id) === myId)
-      const me: UserInterface = {
-        id: userData.id,
-        email: userData.email,
-        goal: userData.goal,
-        job: userData.job,
-        name: userData.name,
-        role: userData.role
-      }
+      const { data } = await UserService.getUserById(token, myId)
+      const me = new User({
+        id: data.id as UserInterface['id'],
+        email: data.email as UserInterface['email'],
+        goal: data.goal as UserInterface['goal'],
+        job: data.job as UserInterface['job'],
+        name: data.name as UserInterface['name'],
+        role: data.role as UserInterface['role']
+      })
       return me
     } catch (error) {
       console.error(error)

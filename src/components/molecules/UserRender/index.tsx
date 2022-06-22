@@ -12,7 +12,7 @@ const UserRender = ({
   user,
   viewerRole = RoleEnum.manager,
   me = false
-}: Props) => {
+}: Props) => {  
   return (
     <Box
       as="div"

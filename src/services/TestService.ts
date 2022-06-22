@@ -11,6 +11,22 @@ export const TestService = {
     }
     return api.get(path, config)
   },
+  getProductsById(token: string) {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+    return api.get(`${path}/1`, config)
+  },
+  getProductsByQuery(token: string) {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+    return api.get(`${path}?cost=10`, config)
+  },
   addProducts(token: string) {
     const config = {
       headers: {
@@ -47,5 +63,21 @@ export const TestService = {
       }
     }
     return api.delete(`${path}/19`, config)
+  },
+  addTransaction(token: string) {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+    const body = {
+      "release": "expense",
+      "date": new Date(),
+      "description": "Conserto da bicicleta",
+      "value": 15464,
+      "category": "Lazer",
+      "user_id": 2
+    }
+    return api.post('/transactions', body, config)
   }
 }

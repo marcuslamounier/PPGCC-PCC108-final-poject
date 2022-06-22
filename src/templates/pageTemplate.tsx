@@ -9,13 +9,15 @@ type Props = {
 
 const PageTemplate = ({ children }: Props) => {
   return (
-    <Box h="100vh">
+    <Box h="100vh" >
       <Head>
         <title>Bolso no Azul</title>
       </Head>
-      <main>
-        {children}
-      </main>
+      <Box as="div" pb="60px">
+        <main>
+          {children}
+        </main>
+      </Box>
       <MvFooter />
     </Box>
   )

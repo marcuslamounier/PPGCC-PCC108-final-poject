@@ -12,9 +12,17 @@ export const UserService = {
     }
     return api.get(path, config)
   },
+  getUserById(token: string, id: number) {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+    return api.get(`${path}/${id}`, config)
+  },
   addUser(
     token: string,
-    bodyReq: Omit<UserInterface, 'id'> & { password: string }
+    bodyReq: Partial<UserInterface> & { password: string }
   ) {
     const config = {
       headers: {

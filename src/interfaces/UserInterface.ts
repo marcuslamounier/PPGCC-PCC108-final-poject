@@ -12,7 +12,3 @@ export interface UserInterface {
   goal: number
   role: RoleEnum
 }
-
-export type UserAuthContextProps = Pick<UserInterface,
-  'name' | 'role' | 'id'
->
