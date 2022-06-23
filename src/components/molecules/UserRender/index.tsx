@@ -1,5 +1,8 @@
 import { Box, Flex, Text, HStack } from "@chakra-ui/react"
-import { RoleEnum, UserInterface } from "../../../interfaces/UserInterface"
+import {
+  RoleEnum,
+  UserInterface
+} from "../../../interfaces/UserInterface"
 import MvBadge from "../../atoms/Badge/MvBadge"
 
 type Props = {
@@ -12,7 +15,7 @@ const UserRender = ({
   user,
   viewerRole = RoleEnum.manager,
   me = false
-}: Props) => {  
+}: Props) => {
   return (
     <Box
       as="div"

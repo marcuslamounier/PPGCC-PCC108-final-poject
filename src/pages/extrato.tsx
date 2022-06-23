@@ -1,12 +1,27 @@
-import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
-import { Box, Button, Heading, HStack, Text, useDisclosure, useToast, VStack } from '@chakra-ui/react'
+import type {
+  GetServerSidePropsContext,
+  InferGetServerSidePropsType
+} from 'next'
+import {
+  Box,
+  Button,
+  Heading,
+  HStack,
+  Text,
+  useDisclosure,
+  useToast,
+  VStack
+} from '@chakra-ui/react'
 import { useAuthContext } from '../services/AuthService/AuthContext'
 import LoggedTemplate from '../templates/loggedTemplate'
 import { checkAtStart } from '../services/AuthService/CheckLogin'
 import MvList from '../components/molecules/List/MvList'
 import FinancesRender from '../components/molecules/FinancesRender'
-import { ReleaseEnum, TransactionInterface } from '../interfaces/TransactionInterface'
-import { createRef, Fragment, useEffect, useState } from 'react'
+import {
+  ReleaseEnum,
+  TransactionInterface
+} from '../interfaces/TransactionInterface'
+import { createRef, useEffect, useState } from 'react'
 import { TransactionService } from '../services/TransactionService'
 import { GrAddCircle } from "react-icons/gr"
 import MvForm, { MvFormProps } from '../components/organisms/MvForm'
@@ -14,7 +29,6 @@ import { dateMask, moneyMask } from '../util/masks'
 import MvModal from '../components/organisms/MvModal'
 import { dateToUtc } from '../util/dateConverter'
 import { getCurrencyVal, onlyNums } from '../util/stringFunctions'
-import { Pontuation } from '../classes/Pontuation'
 import ShowPontuation from '../components/organisms/ShowPontuation'
 import { PontuationService } from '../services/PontuationService'
 
@@ -51,9 +65,8 @@ const Extrato = (
       if (props.token) authContext.setToken(props.token)
       if (props.user.id) {
         try {
-          const { data } = await TransactionService.getTransactionsByUser(
-            props.token, props.user?.id
-          )
+          const { data } = await TransactionService
+            .getTransactionsByUser(props.token, props.user?.id)
           const myGoal = await PontuationService.getMyGoal(
             props.token, props.user?.id
           )
@@ -102,7 +115,9 @@ const Extrato = (
         const { status } = await TransactionService.addTransaction(
           props.token,
           {
-            release: nextRelease === 1 ? ReleaseEnum.revenue : ReleaseEnum.expense,
+            release: (nextRelease === 1)
+              ? ReleaseEnum.revenue
+              : ReleaseEnum.expense,
             category: String(formData.category),
             date: new Date(dateToUtc(String(formData.date))),
             description: String(formData.description),

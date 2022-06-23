@@ -1,8 +1,8 @@
+import React from "react"
 import type { AppProps } from 'next/app'
 import { ChakraProvider } from '@chakra-ui/react'
 import { defaultTheme } from '../theme'
-import { AuthContext, initialUser } from '../services/AuthService/AuthContext'
-import { UserAuthContextProps } from '../interfaces/UserInterface'
+import { AuthContext, initialUser, UserAuthContextProps } from '../services/AuthService/AuthContext'
 import { useState } from 'react'
 import '@fontsource/poppins'
 

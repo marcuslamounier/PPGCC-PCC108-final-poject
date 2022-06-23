@@ -1,8 +1,18 @@
-import { Box, Button, Flex, Heading, useDisclosure, useToast } from "@chakra-ui/react"
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next"
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  useDisclosure,
+  useToast
+} from "@chakra-ui/react"
+import {
+  GetServerSidePropsContext,
+  InferGetServerSidePropsType
+} from "next"
 import { checkAtStart } from "../services/AuthService/CheckLogin"
 import LoggedTemplate from "../templates/loggedTemplate"
-import { createRef, Fragment, useEffect, useState } from "react"
+import { createRef, useEffect, useState } from "react"
 import { UserService } from "../services/UserService"
 import { RoleEnum, UserInterface } from "../interfaces/UserInterface"
 import { IoMdPersonAdd } from "react-icons/io"
@@ -48,7 +58,9 @@ const ManageUsers = (
         setState(prevState => ({
           ...prevState,
           userData: data,
-          me: data.find((user: UserInterface) => user.id === authContext.user.id),
+          me: data.find(
+            (user: UserInterface) => user.id === authContext.user.id
+          ),
           dataChanged: false
         }))
       } catch (error) {
@@ -137,7 +149,12 @@ const ManageUsers = (
     <LoggedTemplate userDetails={props.user}>
       <Heading as="h2">Gestão de Usuários</Heading>
       <Flex justifyContent="flex-end">
-        <Button onClick={onOpen} leftIcon={<IoMdPersonAdd />} variant='solid' colorScheme="green">
+        <Button
+          onClick={onOpen}
+          leftIcon={<IoMdPersonAdd />}
+          variant='solid'
+          colorScheme="green"
+        >
           Adicionar usuário
         </Button>
         <ModalAddUser />
@@ -152,13 +169,16 @@ const ManageUsers = (
                 me
               />
             )}
-            {state.userData.length > 1 && state.userData.filter(user => user.id !== myId).map(user => (
-              <UserRender
-                key={user.id}
-                user={user}
-                viewerRole={state.me?.role || RoleEnum.student}
-              />
-            ))}
+            {
+              state.userData.length > 1 && state.userData
+                .filter(user => user.id !== myId)
+                .map(user => (
+                  <UserRender
+                    key={user.id}
+                    user={user}
+                    viewerRole={state.me?.role || RoleEnum.student}
+                  />
+                ))}
           </MvList>
         )}
       </Box>

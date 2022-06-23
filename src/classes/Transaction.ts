@@ -1,4 +1,7 @@
-import { ReleaseEnum, TransactionInterface } from "../interfaces/TransactionInterface"
+import {
+  ReleaseEnum,
+  TransactionInterface
+} from "../interfaces/TransactionInterface"
 
 export class Transaction implements TransactionInterface {
   protected _id: TransactionInterface['id']

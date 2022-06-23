@@ -1,4 +1,5 @@
-import { FormControl, FormLabel, Input } from "@chakra-ui/react"
+import React from "react"
+import { Button, FormControl, FormLabel, Input, InputGroup, InputRightElement } from "@chakra-ui/react"
 import { ChangeEvent, useState } from "react"
 
 export type MvInputProps = {
@@ -9,6 +10,7 @@ export type MvInputProps = {
   placeholder?: string
   isRequired?: boolean
   mask?: (value: any) => string
+  isPass?: boolean
 }
 
 const InputText = ({
@@ -18,10 +20,13 @@ const InputText = ({
   label,
   placeholder,
   isRequired = true,
-  mask = undefined
+  mask = undefined,
+  isPass = false
 }: MvInputProps) => {
   const objName = `input-${name}`
   const [fieldValue, setFieldValue] = useState<string>(initialValue || '')
+  const [show, setShow] = useState<boolean>(false)
+  const togglePassView = () => setShow(!show)
 
   const updateField = (event: ChangeEvent<HTMLInputElement>) => {
     if (mask) event.target.value = mask(event.target.value)
@@ -32,13 +37,25 @@ const InputText = ({
   return (
     <FormControl isRequired={isRequired} mb={4}>
       <FormLabel htmlFor={objName} mb={1}>{label}</FormLabel>
-      <Input
-        id={objName}
-        placeholder={placeholder || label}
-        name={name}
-        onChange={updateField}
-        value={fieldValue}
-      />
+      <InputGroup size='md'>
+        <Input
+          id={objName}
+          data-testid={`test-${objName}`}
+          pr={isPass ? 'inherit' : '4.5rem'}
+          placeholder={placeholder || label}
+          name={name}
+          onChange={updateField}
+          type={isPass ? (show ? 'text' : 'password') : 'test'}
+          value={fieldValue}
+        />
+        {isPass &&
+          <InputRightElement width='4.5rem'>
+            <Button h='1.75rem' size='sm' onClick={togglePassView}>
+              {show ? 'Hide' : 'Show'}
+            </Button>
+          </InputRightElement>
+        }
+      </InputGroup>
     </FormControl>
   )
 }

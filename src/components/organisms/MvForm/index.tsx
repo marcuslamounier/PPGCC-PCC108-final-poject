@@ -1,3 +1,4 @@
+import React from "react"
 import { ChangeEvent, Component, useState } from "react"
 import InputText, { MvInputProps } from "./InputText"
 
@@ -14,7 +15,8 @@ class MvForm extends Component<MvFormProps, State> {
     super(props)
 
     const fieldNames = props.fields.map(field => field.name)
-    const propForm = fieldNames.reduce((field, key) => ({ ...field, [key]: "" }), {})
+    const propForm = fieldNames
+      .reduce((field, key) => ({ ...field, [key]: "" }), {})
 
     this.state = propForm
   }
@@ -28,7 +30,7 @@ class MvForm extends Component<MvFormProps, State> {
 
   render() {
     return (
-      <>
+      <React.Fragment>
         {this.props.fields.map((field, index) => {
           return (
             <InputText
@@ -39,10 +41,11 @@ class MvForm extends Component<MvFormProps, State> {
               isRequired={field.isRequired}
               mask={field.mask}
               handleInput={this.handleInput}
+              isPass={field.isPass}
             />
           )
         })}
-      </>
+      </React.Fragment>
     )
   }
 }

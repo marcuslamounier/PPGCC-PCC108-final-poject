@@ -19,7 +19,9 @@ const ReleaseSummary = ({ value, release }: Props) => {
       >
         {release === 1 ? ' ganhou ' : ' gastou '}
       </Text>
-      <Text w="100%" fontWeight="900" fontSize="2xl">{formatCurrency(value)}</Text>
+      <Text w="100%" fontWeight="900" fontSize="2xl">
+        {formatCurrency(value)}
+      </Text>
       reais
     </Text>
   )

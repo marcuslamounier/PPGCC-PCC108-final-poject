@@ -1,7 +1,12 @@
-import { useContext, createContext, Dispatch, SetStateAction } from "react"
+import {
+  useContext,
+  createContext,
+  Dispatch,
+  SetStateAction
+} from "react"
 import { RoleEnum, UserInterface } from "../../interfaces/UserInterface"
 
-type UserAuthContextProps = Pick<UserInterface,
+export type UserAuthContextProps = Pick<UserInterface,
   'name' | 'role' | 'id'
 >
 

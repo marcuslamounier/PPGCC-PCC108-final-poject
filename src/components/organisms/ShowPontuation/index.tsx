@@ -1,5 +1,7 @@
-import { Box, Button, HStack, Text } from "@chakra-ui/react"
-import { TransactionInterface } from "../../../interfaces/TransactionInterface"
+import { Box, HStack } from "@chakra-ui/react"
+import {
+  TransactionInterface
+} from "../../../interfaces/TransactionInterface"
 import { UserInterface } from "../../../interfaces/UserInterface"
 import PontuationProgress from "./PontuationProgress"
 import ReleaseSummary from "./ReleaseSummary"
@@ -18,8 +20,12 @@ const getSum = (transactions: TransactionProp) => {
 }
 
 const ShowPontuation = ({ transactions, goal }: Props) => {
-  const expenses = transactions.filter(transaction => transaction.release === -1)
-  const revenues = transactions.filter(transaction => transaction.release === 1)
+  const expenses = transactions.filter(
+    transaction => transaction.release === -1
+  )
+  const revenues = transactions.filter(
+    transaction => transaction.release === 1
+  )
 
   const sumExpenses = getSum(expenses)
   const sumRevenues = getSum(revenues)

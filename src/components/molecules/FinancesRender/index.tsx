@@ -1,5 +1,9 @@
 import { Box, Flex, Text, HStack, VStack } from "@chakra-ui/react"
-import { ReleaseEnum, TransactionInterface } from "../../../interfaces/TransactionInterface"
+import {
+  ReleaseEnum,
+  TransactionInterface
+} from "../../../interfaces/TransactionInterface"
+import { formatCurrency } from "../../../util/stringFunctions"
 import MvBadge from "../../atoms/Badge/MvBadge"
 
 type Props = {
@@ -31,12 +35,18 @@ const FinancesRender = ({ transaction }: Props) => {
           as="div"
           px={4}
           py={2}
-          bgColor={transaction.release === ReleaseEnum.expense ? 'red' : 'blue'}
+          bgColor={transaction.release === ReleaseEnum.expense
+            ? 'red'
+            : 'blue'
+          }
           color="white"
           borderRadius={8}
           fontWeight="bold"
         >
-          {transaction.release === ReleaseEnum.expense ? 'DESPESA' : 'RECEITA'}
+          {transaction.release === ReleaseEnum.expense
+            ? 'DESPESA'
+            : 'RECEITA'
+          }
         </Box>
         <HStack
           display="flex"
@@ -48,8 +58,14 @@ const FinancesRender = ({ transaction }: Props) => {
             <MvBadge badgeName='edit' />
             <MvBadge badgeName='delete' />
           </HStack>
-          <Box as="div" fontSize="2xl" color="black" borderRadius={8} fontWeight="bold">
-            R$ {transaction.value.toLocaleString('pt-Br', {style: 'currency', currency: 'BRL'})}
+          <Box
+            as="div"
+            fontSize="2xl"
+            color="black"
+            borderRadius={8}
+            fontWeight="bold"
+          >
+            {formatCurrency(transaction.value)}
           </Box>
         </HStack>
       </VStack>

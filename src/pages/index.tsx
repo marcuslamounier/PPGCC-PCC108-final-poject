@@ -1,3 +1,4 @@
+import React, { createRef } from 'react'
 import type { NextPage } from 'next'
 import {
   Box,
@@ -5,31 +6,18 @@ import {
   Center,
   Heading,
   VStack,
-  FormControl,
-  FormLabel,
-  Input,
-  InputGroup,
-  InputRightElement,
   useToast
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
 import { AuthService } from '../services/AuthService/AuthService'
 import nookies from 'nookies'
 import { UserService } from '../services/UserService'
 import { UserInterface } from '../interfaces/UserInterface'
+import MvForm, { MvFormProps } from '../components/organisms/MvForm'
 
 const Home: NextPage = () => {
   const router = useRouter()
   const toast = useToast()
-
-  const [email, setEmail] = useState<string>("")
-  const [pass, setPass] = useState<string>("")
-  const [show, setShow] = useState<boolean>(false)
-  const togglePassView = () => setShow(!show)
-
-  const handleEmail = (event: any) => setEmail(event.target.value)
-  const handlePass = (event: any) => setPass(event.target.value)
 
   const authenthicate = async (email: string, pass: string) => {
     try {
@@ -77,8 +65,30 @@ const Home: NextPage = () => {
     }
   }
 
+  const formFields: MvFormProps['fields'] = [
+    { name: 'email', label: 'Email' },
+    { name: 'pass', label: 'Senha', isPass: true }
+  ]
+  const formRef = createRef<MvForm>()
+
   const onSubmit = () => {
-    authenthicate(email, pass)
+    const formData = formRef.current?.state
+    if (!formData) return
+    else {
+      for (const field in formData) {
+        if ((formData as any)[field] === '') {
+          toast({
+            title: 'Form incomplete',
+            description: "You should fill the form.",
+            status: 'error',
+            duration: 3000,
+            isClosable: true,
+          })
+          return
+        }
+      }
+      authenthicate(String(formData.email), String(formData.pass))
+    }
   }
 
   return (
@@ -86,33 +96,14 @@ const Home: NextPage = () => {
       <VStack as="div" bg="brand.main" borderRadius="md" p={4}>
         <Heading as="h1" color="white">Bolso no Azul</Heading>
         <Box w="100%" bg="white" borderRadius="md" p={4}>
-          <FormControl isRequired>
-            <FormLabel htmlFor='input-email'>Email</FormLabel>
-            <Input
-              id='input-email'
-              placeholder='Email'
-              onChange={handleEmail}
-            />
-          </FormControl>
-          <FormControl isRequired>
-            <FormLabel htmlFor='input-pass'>Senha</FormLabel>
-            <InputGroup size='md'>
-              <Input
-                id="input-pass"
-                pr='4.5rem'
-                type={show ? 'text' : 'password'}
-                placeholder='Enter password'
-                onChange={handlePass}
-              />
-              <InputRightElement width='4.5rem'>
-                <Button h='1.75rem' size='sm' onClick={togglePassView}>
-                  {show ? 'Hide' : 'Show'}
-                </Button>
-              </InputRightElement>
-            </InputGroup>
-          </FormControl>
+          <MvForm ref={formRef} fields={formFields} />
         </Box>
-        <Button onClick={onSubmit}>Autenticar-se</Button>
+        <Button
+          data-testid="test-submit"
+          onClick={onSubmit}
+        >
+          Autenticar-se
+        </Button>
       </VStack>
     </Center>
   )
