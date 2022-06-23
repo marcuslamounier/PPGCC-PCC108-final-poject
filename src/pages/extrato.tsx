@@ -7,7 +7,6 @@ import {
   Button,
   Heading,
   HStack,
-  Text,
   useDisclosure,
   useToast,
   VStack
@@ -28,11 +27,13 @@ import MvForm, { MvFormProps } from '../components/organisms/MvForm'
 import { dateMask, moneyMask } from '../util/masks'
 import MvModal from '../components/organisms/MvModal'
 import { dateToUtc } from '../util/dateConverter'
-import { getCurrencyVal, onlyNums } from '../util/stringFunctions'
+import { getCurrencyVal } from '../util/stringFunctions'
 import ShowPontuation from '../components/organisms/ShowPontuation'
 import { PontuationService } from '../services/PontuationService'
 
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+export const getServerSideProps = async (
+  ctx: GetServerSidePropsContext
+) => {
   return await checkAtStart(ctx)
     .then((props) => { return props })
     .catch((error) => { throw error })
@@ -199,7 +200,7 @@ const Extrato = (
           />
           <HStack
             w="100%"
-            justifyContent="center"
+            justifyContent="space-around"
             alignItems="flex-start"
           >
             <Button

@@ -41,12 +41,8 @@ const ShowPontuation = ({ transactions, goal }: Props) => {
         justifyContent="center"
         alignItems="flex-start"
       >
-        <Box as="div" w="50%">
-          <ReleaseSummary release={1} value={sumRevenues} />
-        </Box>
-        <Box as="div" w="50%">
-          <ReleaseSummary release={-1} value={sumExpenses} />
-        </Box>
+        <ReleaseSummary release={1} value={sumRevenues} />
+        <ReleaseSummary release={-1} value={sumExpenses} />
       </HStack>
     </Box>
   )
