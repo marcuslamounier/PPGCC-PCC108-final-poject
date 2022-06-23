@@ -1,8 +1,7 @@
-import React, { InputHTMLAttributes } from 'react'
+import React from 'react'
 import { render } from '@testing-library/react'
 import Home from "../src/pages/index"
 import { AuthService } from '../src/services/AuthService/AuthService'
-import userEvent from '@testing-library/user-event'
 
 describe('Page tests', () => {
   it('should render fields', () => {

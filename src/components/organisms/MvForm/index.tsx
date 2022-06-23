@@ -1,6 +1,8 @@
 import React from "react"
-import { ChangeEvent, Component, useState } from "react"
-import InputText, { MvInputProps } from "./InputText"
+import { ChangeEvent, Component } from "react"
+import InputText, {
+  MvInputProps
+} from "../../molecules/InputText/InputText"
 
 export type MvFormProps = {
   fields: Omit<MvInputProps, "handleInput">[]
