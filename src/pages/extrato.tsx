@@ -1,12 +1,12 @@
 import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
-import { Box, Button, Heading, HStack, useDisclosure, useToast } from '@chakra-ui/react'
+import { Box, Button, Heading, HStack, Text, useDisclosure, useToast, VStack } from '@chakra-ui/react'
 import { useAuthContext } from '../services/AuthService/AuthContext'
 import LoggedTemplate from '../templates/loggedTemplate'
 import { checkAtStart } from '../services/AuthService/CheckLogin'
 import MvList from '../components/molecules/List/MvList'
 import FinancesRender from '../components/molecules/FinancesRender'
 import { ReleaseEnum, TransactionInterface } from '../interfaces/TransactionInterface'
-import { createRef, useEffect, useState } from 'react'
+import { createRef, Fragment, useEffect, useState } from 'react'
 import { TransactionService } from '../services/TransactionService'
 import { GrAddCircle } from "react-icons/gr"
 import MvForm, { MvFormProps } from '../components/organisms/MvForm'
@@ -14,6 +14,9 @@ import { dateMask, moneyMask } from '../util/masks'
 import MvModal from '../components/organisms/MvModal'
 import { dateToUtc } from '../util/dateConverter'
 import { getCurrencyVal, onlyNums } from '../util/stringFunctions'
+import { Pontuation } from '../classes/Pontuation'
+import ShowPontuation from '../components/organisms/ShowPontuation'
+import { PontuationService } from '../services/PontuationService'
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   return await checkAtStart(ctx)
@@ -34,10 +37,12 @@ const Extrato = (
     dataIsLoading: boolean,
     dataChanged: boolean,
     transactionsData: TransactionInterface[],
+    myGoal: number
   }>({
     dataIsLoading: true,
     dataChanged: false,
-    transactionsData: []
+    transactionsData: [],
+    myGoal: 0
   })
 
   useEffect(() => {
@@ -49,11 +54,15 @@ const Extrato = (
           const { data } = await TransactionService.getTransactionsByUser(
             props.token, props.user?.id
           )
+          const myGoal = await PontuationService.getMyGoal(
+            props.token, props.user?.id
+          )
           setState(prevState => ({
             ...prevState,
             transactionsData: data,
             dataChanged: false,
-            dataIsLoading: false
+            dataIsLoading: false,
+            myGoal: myGoal
           }))
         } catch (error) {
           console.log(error)
@@ -148,43 +157,61 @@ const Extrato = (
         <Box as="div" w="60%">
           {!state.dataIsLoading && (
             <MvList>
-              {state.transactionsData.length > 0 && state.transactionsData.map(transaction => (
-                <FinancesRender key={transaction.id} transaction={transaction} />
-              ))}
+              {state.transactionsData.length > 0 &&
+                state.transactionsData.map(transaction => (
+                  <FinancesRender
+                    key={transaction.id}
+                    transaction={transaction}
+                  />
+                ))}
             </MvList>
           )}
         </Box>
-        <HStack
+
+        <VStack
           as="div"
           w="40%"
           spacing={2}
-          justifyContent="center"
-          alignItems="flex-start"
         >
-          <Button
-            onClick={() => {
-              setNextRelease(1)
-              onOpen()
-            }}
-            leftIcon={<GrAddCircle />}
-            variant='solid'
-            colorScheme="blue"
+          <ShowPontuation
+            transactions={
+              state.transactionsData.map(transaction => ({
+                value: transaction.value,
+                release: transaction.release
+              }))
+            }
+            goal={state.myGoal}
+          />
+          <HStack
+            w="100%"
+            justifyContent="center"
+            alignItems="flex-start"
           >
-            Adicionar RECEITA
-          </Button>
-          <Button
-            onClick={() => {
-              setNextRelease(-1)
-              onOpen()
-            }}
-            leftIcon={<GrAddCircle />}
-            variant='solid'
-            colorScheme="red"
-          >
-            Adicionar DESPESA
-          </Button>
+            <Button
+              onClick={() => {
+                setNextRelease(1)
+                onOpen()
+              }}
+              leftIcon={<GrAddCircle />}
+              variant='solid'
+              colorScheme="blue"
+            >
+              Adicionar RECEITA
+            </Button>
+            <Button
+              onClick={() => {
+                setNextRelease(-1)
+                onOpen()
+              }}
+              leftIcon={<GrAddCircle />}
+              variant='solid'
+              colorScheme="red"
+            >
+              Adicionar DESPESA
+            </Button>
+          </HStack>
           <ModalAddUser />
-        </HStack>
+        </VStack>
       </MvList>
     </LoggedTemplate>
   )

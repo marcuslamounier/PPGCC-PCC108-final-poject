@@ -30,5 +30,5 @@ export const UserService = {
       }
     }
     return api.post(path, bodyReq, config)
-  }
+  },
 }
