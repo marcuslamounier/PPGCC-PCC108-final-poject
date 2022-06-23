@@ -22,7 +22,9 @@ import { useAuthContext } from "../services/AuthService/AuthContext"
 import MvModal from "../components/organisms/MvModal"
 import MvForm, { MvFormProps } from "../components/organisms/MvForm"
 
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+export const getServerSideProps = async (
+  ctx: GetServerSidePropsContext
+) => {
   return await checkAtStart(ctx)
     .then((props) => { return props })
     .catch((error) => { throw error })

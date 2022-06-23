@@ -10,10 +10,10 @@ import {
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { AuthService } from '../services/AuthService/AuthService'
-import nookies from 'nookies'
 import { UserService } from '../services/UserService'
 import { UserInterface } from '../interfaces/UserInterface'
 import MvForm, { MvFormProps } from '../components/organisms/MvForm'
+import { Session } from '../classes/Session'
 
 const Home: NextPage = () => {
   const router = useRouter()
@@ -24,13 +24,21 @@ const Home: NextPage = () => {
       const { data, status } = await AuthService.login(email, pass)
       if (status === 200) {
         const token = data.access_token
-        nookies.destroy(null, 'token')
-        nookies.set(null, 'token', token, { path: '/' })
-
         const { data: userData } = await UserService.getUsers(token)
-        const userDetails: UserInterface = userData.find((user: any) => user.email === email)
-        nookies.destroy(null, 'user_id')
-        nookies.set(null, 'user_id', String(userDetails.id), { path: '/' })
+        const userDetails: UserInterface = userData.find(
+          (user: any) => user.email === email
+        )
+
+        const session = new Session({
+          token: token,
+          user_id: userDetails.id
+        })
+
+        try {
+          await session.createSession()
+        } catch (error) {
+          console.error(error)
+        }
 
         toast({
           title: 'Login successfully.',
